@@ -11,9 +11,9 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "API Bancaire",
+      title: "NYAJ - Banking API",
       version: "1.0.0",
-      description: "API simple de gestion de comptes bancaires (dépôt, retrait, historique).",
+      description: "API simple de gestion de comptes bancaires (dépôt, retrait, historique). © NYAJ",
     },
     components: {
       schemas: {
