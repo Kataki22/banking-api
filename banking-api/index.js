@@ -615,6 +615,71 @@ app.get("/api/comptes/:id/transactions", (req, res) => {
   reponse(res, 200, `${historique.length} transaction(s) trouvée(s).`, historique.map(formaterTransaction));
 });
 
+/**
+ * @openapi
+ * /api/comptes/{id}:
+ *   delete:
+ *     summary: Supprimer un compte bancaire
+ *     description: |
+ *       Supprime définitivement un compte et toutes ses transactions associées (suppression en cascade).
+ *       **Règles** :
+ *       - Le compte doit exister.
+ *       - L'opération est irréversible.
+ *       - Toutes les transactions liées (dépôts et retraits) sont également supprimées.
+ *     tags: [Comptes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: UUID v4 du compte à supprimer
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Compte supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Reponse'
+ *                 - type: object
+ *                   properties:
+ *                     donnees:
+ *                       type: object
+ *                       properties:
+ *                         compteSupprime: { type: string, format: uuid }
+ *                         transactionsSupprimees: { type: integer }
+ *             example:
+ *               succes: true
+ *               message: "Compte supprimé avec succès."
+ *               donnees:
+ *                 compteSupprime: "f0a1b2c3-d4e5-6789-abcd-ef0123456789"
+ *                 transactionsSupprimees: 3
+ *       404:
+ *         $ref: '#/components/responses/CompteIntrouvable'
+ */
+app.delete("/api/comptes/:id", (req, res) => {
+  const index = comptes.findIndex((c) => c.id === req.params.id);
+  if (index === -1) {
+    return reponse(res, 404, "Compte introuvable.", null);
+  }
+
+  const compteSupprime = comptes[index];
+  comptes.splice(index, 1);
+
+  const transactionsAvant = transactions.length;
+  for (let i = transactions.length - 1; i >= 0; i--) {
+    if (transactions[i].compteId === compteSupprime.id) {
+      transactions.splice(i, 1);
+    }
+  }
+  const transactionsSupprimees = transactionsAvant - transactions.length;
+
+  reponse(res, 200, "Compte supprimé avec succès.", {
+    compteSupprime: compteSupprime.id,
+    transactionsSupprimees,
+  });
+});
+
 // --- Demarrage ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

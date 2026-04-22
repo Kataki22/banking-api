@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Cahier des charges - NYAJ Banking API</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1f2937;
+    line-height: 1.55;
+    font-size: 11pt;
+    max-width: 100%;
+  }
+  h1, h2, h3, h4 { color: #0f3d8a; page-break-after: avoid; }
+  h1 { font-size: 22pt; border-bottom: 3px solid #0f3d8a; padding-bottom: 6px; margin-top: 0; }
+  h2 { font-size: 16pt; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-top: 22px; }
+  h3 { font-size: 13pt; margin-top: 18px; }
+  h4 { font-size: 11.5pt; margin-top: 14px; }
+  p { margin: 6px 0; }
+  code {
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 9.5pt;
+    color: #0f3d8a;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 10px 12px;
+    border-radius: 5px;
+    font-size: 9pt;
+    overflow-x: auto;
+    page-break-inside: avoid;
+  }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 9.5pt;
+    page-break-inside: auto;
+  }
+  tr { page-break-inside: avoid; page-break-after: auto; }
+  thead { display: table-header-group; background: #0f3d8a; color: #fff; }
+  th, td {
+    border: 1px solid #cbd5e1;
+    padding: 5px 7px;
+    text-align: left;
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  hr { border: none; border-top: 1px solid #cbd5e1; margin: 18px 0; }
+  ul, ol { margin: 6px 0 6px 20px; }
+  li { margin: 2px 0; }
+  strong { color: #0f3d8a; }
+  .footer {
+    text-align: center;
+    font-size: 8.5pt;
+    color: #64748b;
+    margin-top: 30px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 8px;
+  }
+</style>
+</head>
+<body>
+<h1>Cahier des Charges - API Bancaire</h1>
+<p><strong>Étudiant :</strong> NGA YENDE ALI JUNIOR<br><strong>Niveau :</strong> L3<br><strong>Filière :</strong> ICT4D<br><strong>Matière :</strong> ICT304 - Software Testing and Quality Assurance</p>
+<hr>
+<h2>1. Contexte et objectifs</h2>
+<p>Conception d&#39;une API REST pour un systeme de transactions bancaires permettant
+aux clients de gerer leurs comptes, effectuer des depots et des retraits.</p>
+<hr>
+<h2>2. Besoins</h2>
+<h3>2.1 Besoins fonctionnels</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Besoin</th>
+<th>Priorite</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BF01</td>
+<td>Creer un compte bancaire</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BF02</td>
+<td>Consulter la liste des comptes</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BF03</td>
+<td>Consulter un compte par ID</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BF04</td>
+<td>Effectuer un depot sur un compte</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BF05</td>
+<td>Effectuer un retrait sur un compte</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BF06</td>
+<td>Consulter l&#39;historique des transactions</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>BF07</td>
+<td>Supprimer un compte bancaire</td>
+<td>Moyenne</td>
+</tr>
+</tbody></table>
+<h3>2.2 Besoins non fonctionnels</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Besoin</th>
+<th>Priorite</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BNF01</td>
+<td>Temps de reponse &lt; 500ms par requete</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BNF02</td>
+<td>Validation des donnees en entree</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BNF03</td>
+<td>Gestion des erreurs avec codes HTTP appropries</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BNF04</td>
+<td>Un retrait ne peut pas rendre le solde negatif</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>BNF05</td>
+<td>API documentee (endpoints clairs et coherents)</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>BNF06</td>
+<td>Architecture extensible (ajout futur d&#39;auth, BDD)</td>
+<td>Moyenne</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Acteurs</h2>
+<table>
+<thead>
+<tr>
+<th>Acteur</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Client</td>
+<td>Utilisateur qui cree un compte, depose et retire de l&#39;argent</td>
+</tr>
+<tr>
+<td>Systeme (API)</td>
+<td>Traite les requetes, valide les donnees, gere les soldes</td>
+</tr>
+<tr>
+<td>Administrateur</td>
+<td>(Futur) Supervise les comptes et transactions</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4. Cas d&#39;utilisation</h2>
+<h3>CU01 - Creer un compte</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Aucune</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie une requete POST /api/comptes avec son nom et prenom</li>
+<li>Le systeme valide les donnees</li>
+<li>Le systeme cree le compte avec un solde initial de 0</li>
+<li>Le systeme retourne le compte cree avec son ID unique</li>
+</ol>
+</li>
+<li><strong>Scenario alternatif</strong> : Donnees manquantes -&gt; erreur 400</li>
+</ul>
+<h3>CU02 - Lister les comptes</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Aucune</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie une requete GET /api/comptes</li>
+<li>Le systeme retourne la liste de tous les comptes</li>
+</ol>
+</li>
+</ul>
+<h3>CU03 - Consulter un compte</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Le compte existe</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie une requete GET /api/comptes/:id</li>
+<li>Le systeme retourne les details du compte</li>
+</ol>
+</li>
+<li><strong>Scenario alternatif</strong> : Compte introuvable -&gt; erreur 404</li>
+</ul>
+<h3>CU04 - Effectuer un depot</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Le compte existe, montant &gt; 0</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie POST /api/comptes/:id/depot avec le montant</li>
+<li>Le systeme valide le montant</li>
+<li>Le systeme ajoute le montant au solde</li>
+<li>Le systeme enregistre la transaction et retourne le compte mis a jour</li>
+</ol>
+</li>
+<li><strong>Scenario alternatif</strong> : Montant invalide -&gt; erreur 400</li>
+</ul>
+<h3>CU05 - Effectuer un retrait</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Le compte existe, montant &gt; 0, solde suffisant</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie POST /api/comptes/:id/retrait avec le montant</li>
+<li>Le systeme verifie que le solde est suffisant</li>
+<li>Le systeme soustrait le montant du solde</li>
+<li>Le systeme enregistre la transaction et retourne le compte mis a jour</li>
+</ol>
+</li>
+<li><strong>Scenarios alternatifs</strong> :<ul>
+<li>Montant invalide -&gt; erreur 400</li>
+<li>Solde insuffisant -&gt; erreur 400</li>
+</ul>
+</li>
+</ul>
+<h3>CU06 - Consulter l&#39;historique des transactions</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Le compte existe</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie GET /api/comptes/:id/transactions</li>
+<li>Le systeme retourne la liste des transactions du compte</li>
+</ol>
+</li>
+</ul>
+<h3>CU07 - Supprimer un compte</h3>
+<ul>
+<li><strong>Acteur</strong> : Client</li>
+<li><strong>Pre-condition</strong> : Le compte existe</li>
+<li><strong>Scenario principal</strong> :<ol>
+<li>Le client envoie DELETE /api/comptes/:id</li>
+<li>Le systeme supprime le compte</li>
+<li>Le systeme supprime en cascade toutes les transactions associees</li>
+<li>Le systeme retourne une confirmation avec le nombre de transactions supprimees</li>
+</ol>
+</li>
+<li><strong>Scenario alternatif</strong> : Compte introuvable -&gt; erreur 404</li>
+<li><strong>Remarque</strong> : L&#39;operation est irreversible</li>
+</ul>
+<hr>
+<h2>5. Endpoints de l&#39;API</h2>
+<table>
+<thead>
+<tr>
+<th>Methode</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td>/api/comptes</td>
+<td>Creer un compte</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/comptes</td>
+<td>Lister tous les comptes</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/comptes/:id</td>
+<td>Consulter un compte</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/comptes/:id/depot</td>
+<td>Effectuer un depot</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/comptes/:id/retrait</td>
+<td>Effectuer un retrait</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/comptes/:id/transactions</td>
+<td>Historique des transactions</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/api/comptes/:id</td>
+<td>Supprimer un compte</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>6. Modeles de donnees</h2>
+<h3>Compte</h3>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;uuid&quot;,
+  &quot;nom&quot;: &quot;string&quot;,
+  &quot;prenom&quot;: &quot;string&quot;,
+  &quot;solde&quot;: &quot;number&quot;,
+  &quot;dateCreation&quot;: &quot;ISO 8601&quot;
+}
+</code></pre>
+<h3>Transaction</h3>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;uuid&quot;,
+  &quot;compteId&quot;: &quot;uuid&quot;,
+  &quot;type&quot;: &quot;depot | retrait&quot;,
+  &quot;montant&quot;: &quot;number&quot;,
+  &quot;date&quot;: &quot;ISO 8601&quot;
+}
+</code></pre>
+<hr>
+<h2>7. Stack technique</h2>
+<ul>
+<li><strong>Runtime</strong> : Node.js</li>
+<li><strong>Framework</strong> : Express.js</li>
+<li><strong>Stockage</strong> : En memoire (evolutif vers une BDD)</li>
+<li><strong>Format</strong> : JSON</li>
+<li><strong>Documentation</strong> : Swagger (OpenAPI 3.0)</li>
+</ul>
+<hr>
+<h2>8. Plan de tests (ICT304 - Software Testing)</h2>
+<p>Les cas de tests suivent le <strong>Test Case Format (Template 1)</strong> du cours ICT304 et appliquent le principe du <strong>Defensive Testing</strong> : couverture des conditions normales (entrees valides) et anormales (entrees invalides).</p>
+<h3>8.1 Legende</h3>
+<ul>
+<li><strong>Test Case ID</strong> : Identifiant unique</li>
+<li><strong>Test Case Description</strong> : Objectif du test</li>
+<li><strong>Test Input</strong> : Donnees d&#39;entree</li>
+<li><strong>Expected Results</strong> : Resultat attendu (code HTTP + message)</li>
+<li><strong>Test Case Status</strong> : Not Executed / Pass / Fail</li>
+</ul>
+<h3>8.2 Module General</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-001</td>
+<td>Verifier la page d&#39;accueil</td>
+<td><code>GET /</code></td>
+<td>HTTP 200 + message de bienvenue</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-002</td>
+<td>Acceder a la documentation Swagger</td>
+<td><code>GET /api-docs</code></td>
+<td>HTTP 200 + Swagger UI</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.3 Module Creation de compte (POST /api/comptes)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-003</td>
+<td>Creer un compte valide</td>
+<td><code>{nom: &quot;Dupont&quot;, prenom: &quot;Jean&quot;}</code></td>
+<td>HTTP 201 + compte cree avec UUID, solde 0.00 FCFA</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-004</td>
+<td>Creer sans champ nom</td>
+<td><code>{prenom: &quot;Jean&quot;}</code></td>
+<td>HTTP 400 + erreur champs requis</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-005</td>
+<td>Creer sans champ prenom</td>
+<td><code>{nom: &quot;Dupont&quot;}</code></td>
+<td>HTTP 400 + erreur champs requis</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-006</td>
+<td>Creer avec corps vide</td>
+<td><code>{}</code></td>
+<td>HTTP 400 + erreur</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-007</td>
+<td>Creer avec nom vide</td>
+<td><code>{nom: &quot;&quot;, prenom: &quot;Jean&quot;}</code></td>
+<td>HTTP 400 + erreur</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-008</td>
+<td>Creer avec prenom vide</td>
+<td><code>{nom: &quot;Dupont&quot;, prenom: &quot;&quot;}</code></td>
+<td>HTTP 400 + erreur</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-009</td>
+<td>Creer deux comptes (UUIDs uniques)</td>
+<td>Deux requetes valides</td>
+<td>Deux UUIDs differents</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-010</td>
+<td>Creer sans Content-Type JSON</td>
+<td>Sans header JSON</td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.4 Module Listing (GET /api/comptes)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-011</td>
+<td>Lister quand aucun compte</td>
+<td><code>GET /api/comptes</code></td>
+<td>HTTP 200 + tableau vide</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-012</td>
+<td>Lister 3 comptes</td>
+<td>Apres 3 creations</td>
+<td>HTTP 200 + 3 comptes</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-013</td>
+<td>Verifier formatage du solde</td>
+<td><code>GET /api/comptes</code></td>
+<td>Chaque solde au format &quot;X.XX FCFA&quot;</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.5 Module Consultation (GET /api/comptes/:id)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-014</td>
+<td>Consulter compte existant</td>
+<td>ID UUID valide</td>
+<td>HTTP 200 + donnees compte</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-015</td>
+<td>Consulter ID inexistant</td>
+<td>UUID non cree</td>
+<td>HTTP 404 + &quot;Compte introuvable&quot;</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-016</td>
+<td>Consulter ID malforme</td>
+<td><code>GET /api/comptes/abc</code></td>
+<td>HTTP 404</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.6 Module Depot (POST /api/comptes/:id/depot)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-018</td>
+<td>Depot valide</td>
+<td><code>{montant: 5000}</code></td>
+<td>HTTP 200 + solde mis a jour</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-019</td>
+<td>Depot sur compte inexistant</td>
+<td>ID inconnu</td>
+<td>HTTP 404</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-020</td>
+<td>Depot avec montant negatif</td>
+<td><code>{montant: -100}</code></td>
+<td>HTTP 400 + &quot;montant doit etre positif&quot;</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-021</td>
+<td>Depot avec montant zero</td>
+<td><code>{montant: 0}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-022</td>
+<td>Depot avec chaine</td>
+<td><code>{montant: &quot;5000&quot;}</code></td>
+<td>HTTP 400 (typeof != number)</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-023</td>
+<td>Depot sans montant</td>
+<td><code>{}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-024</td>
+<td>Depot avec null</td>
+<td><code>{montant: null}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-025</td>
+<td>Depots successifs (cumul)</td>
+<td>1000 puis 2000</td>
+<td>Solde = 3000.00 FCFA</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-026</td>
+<td>Depot tres grand</td>
+<td><code>{montant: 1000000000}</code></td>
+<td>HTTP 200</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-027</td>
+<td>Depot decimal</td>
+<td><code>{montant: 1234.56}</code></td>
+<td>HTTP 200 + &quot;1234.56 FCFA&quot;</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.7 Module Retrait (POST /api/comptes/:id/retrait)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-028</td>
+<td>Retrait valide</td>
+<td>solde=10000, <code>{montant: 3000}</code></td>
+<td>HTTP 200 + solde = 7000.00 FCFA</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-029</td>
+<td>Retrait compte inexistant</td>
+<td>ID inconnu</td>
+<td>HTTP 404</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-030</td>
+<td>Solde insuffisant</td>
+<td>solde=1000, <code>{montant: 5000}</code></td>
+<td>HTTP 400 + &quot;Solde insuffisant&quot;</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-031</td>
+<td>Retrait = solde (limite)</td>
+<td>solde=5000, <code>{montant: 5000}</code></td>
+<td>HTTP 200 + solde = 0.00 FCFA</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-032</td>
+<td>Montant negatif</td>
+<td><code>{montant: -500}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-033</td>
+<td>Montant zero</td>
+<td><code>{montant: 0}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-034</td>
+<td>Sans montant</td>
+<td><code>{}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-035</td>
+<td>Montant non numerique</td>
+<td><code>{montant: &quot;abc&quot;}</code></td>
+<td>HTTP 400</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-036</td>
+<td>Retraits successifs</td>
+<td>solde=1000, 2x500</td>
+<td>Solde final = 0</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-037</td>
+<td>Retrait sur solde=0</td>
+<td><code>{montant: 100}</code></td>
+<td>HTTP 400 + &quot;Solde insuffisant&quot;</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.8 Module Historique (GET /api/comptes/:id/transactions)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-038</td>
+<td>Historique vide</td>
+<td>Compte neuf</td>
+<td>HTTP 200 + tableau vide</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-039</td>
+<td>Historique apres 1 depot</td>
+<td>1 depot de 5000</td>
+<td>HTTP 200 + 1 transaction &quot;depot&quot;</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-040</td>
+<td>Historique mixte</td>
+<td>1 depot + 1 retrait</td>
+<td>HTTP 200 + 2 transactions</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-041</td>
+<td>Historique compte inexistant</td>
+<td>ID inconnu</td>
+<td>HTTP 404</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-042</td>
+<td>Isolation entre comptes</td>
+<td>Compte A avec txns, B vide</td>
+<td>B reste vide</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-043</td>
+<td>Formatage montant/date</td>
+<td>Transaction existante</td>
+<td>Montant &quot;X.XX FCFA&quot; + date FR</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.9 Module Suppression (DELETE /api/comptes/:id)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-047</td>
+<td>Suppression valide d&#39;un compte existant</td>
+<td>ID UUID valide</td>
+<td>HTTP 200 + succes: true + compteSupprime</td>
+<td>Not Executed</td>
+</tr>
+<tr>
+<td>TC-048</td>
+<td>Suppression d&#39;un compte inexistant</td>
+<td>UUID non cree</td>
+<td>HTTP 404 + &quot;Compte introuvable&quot;</td>
+<td>Not Executed</td>
+</tr>
+<tr>
+<td>TC-049</td>
+<td>Apres suppression, le compte ne figure plus dans la liste</td>
+<td>Supprimer puis GET /api/comptes</td>
+<td>Compte absent de la liste</td>
+<td>Not Executed</td>
+</tr>
+<tr>
+<td>TC-050</td>
+<td>Suppression en cascade des transactions associees</td>
+<td>Compte avec 2 transactions + DELETE</td>
+<td>transactionsSupprimees = 2</td>
+<td>Not Executed</td>
+</tr>
+</tbody></table>
+<h3>8.10 Scenarios bout-en-bout (Integration)</h3>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Test Case Description</th>
+<th>Test Input</th>
+<th>Expected Results</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC-044</td>
+<td>Scenario complet</td>
+<td>Creation + depot + retrait + historique</td>
+<td>Toute la chaine coherente</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-045</td>
+<td>Creations simultanees</td>
+<td>5 POST paralleles</td>
+<td>5 UUIDs uniques</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>TC-046</td>
+<td>Transactions concurrentes</td>
+<td>2 depots paralleles 1000</td>
+<td>Solde = 2000.00 FCFA</td>
+<td>Pass</td>
+</tr>
+</tbody></table>
+<h3>8.11 Matrice de tracabilite (RTM)</h3>
+<p>Conformement au cours ICT304, chaque exigence fonctionnelle est liee a ses cas de tests :</p>
+<table>
+<thead>
+<tr>
+<th>Besoin</th>
+<th>Description</th>
+<th>Cas de tests</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BF01</td>
+<td>Creer un compte</td>
+<td>TC-003 a TC-010</td>
+</tr>
+<tr>
+<td>BF02</td>
+<td>Consulter la liste des comptes</td>
+<td>TC-011 a TC-013</td>
+</tr>
+<tr>
+<td>BF03</td>
+<td>Consulter un compte par ID</td>
+<td>TC-014 a TC-016</td>
+</tr>
+<tr>
+<td>BF04</td>
+<td>Effectuer un depot</td>
+<td>TC-018 a TC-027</td>
+</tr>
+<tr>
+<td>BF05</td>
+<td>Effectuer un retrait</td>
+<td>TC-028 a TC-037</td>
+</tr>
+<tr>
+<td>BF06</td>
+<td>Consulter l&#39;historique</td>
+<td>TC-038 a TC-043</td>
+</tr>
+<tr>
+<td>BF07</td>
+<td>Supprimer un compte</td>
+<td>TC-047 a TC-050</td>
+</tr>
+<tr>
+<td>BNF02</td>
+<td>Validation des donnees</td>
+<td>TC-004 a TC-008, TC-020 a TC-024, TC-032 a TC-035</td>
+</tr>
+<tr>
+<td>BNF03</td>
+<td>Codes HTTP appropries</td>
+<td>Tous les TC</td>
+</tr>
+<tr>
+<td>BNF04</td>
+<td>Solde jamais negatif</td>
+<td>TC-030, TC-031, TC-037</td>
+</tr>
+<tr>
+<td>BNF05</td>
+<td>Documentation API</td>
+<td>TC-001, TC-002</td>
+</tr>
+</tbody></table>
+<h3>8.12 Synthese</h3>
+<ul>
+<li><strong>Nombre total de cas de tests</strong> : 49</li>
+<li><strong>Exécutés</strong> : 45 / 49</li>
+<li><strong>Pass</strong> : 45</li>
+<li><strong>Fail</strong> : 0</li>
+<li><strong>API testée</strong> : <a href="https://banking-api-rdlr.onrender.com">https://banking-api-rdlr.onrender.com</a></li>
+<li><strong>Couverture</strong> : defensive (normale + anormale), limites, integration</li>
+<li><strong>Types d&#39;erreurs testees</strong> : syntaxiques, logiques, semantiques, limites</li>
+<li><strong>Remarque</strong> : Les tests TC-047 a TC-050 (suppression de compte) ne seront executables qu&#39;apres le redeploiement de l&#39;API sur Render.</li>
+</ul>
+
+<div class="footer">
+  NYAJ Banking API - Cahier des charges - Genere le 22/04/2026
+</div>
+</body>
+</html>
