@@ -272,10 +272,10 @@ Les cas de tests suivent le **Test Case Format (Template 1)** du cours ICT304 et
 
 | Test Case ID | Test Case Description | Test Input | Expected Results | Status |
 |--------------|-----------------------|------------|------------------|--------|
-| TC-047 | Suppression valide d'un compte existant | ID UUID valide | HTTP 200 + succes: true + compteSupprime | Not Executed |
-| TC-048 | Suppression d'un compte inexistant | UUID non cree | HTTP 404 + "Compte introuvable" | Not Executed |
-| TC-049 | Apres suppression, le compte ne figure plus dans la liste | Supprimer puis GET /api/comptes | Compte absent de la liste | Not Executed |
-| TC-050 | Suppression en cascade des transactions associees | Compte avec 2 transactions + DELETE | transactionsSupprimees = 2 | Not Executed |
+| TC-047 | Suppression valide d'un compte existant | ID UUID valide | HTTP 200 + succes: true + compteSupprime | Pass |
+| TC-048 | Suppression d'un compte inexistant | UUID non cree | HTTP 404 + "Compte introuvable" | Pass |
+| TC-049 | Apres suppression, le compte ne figure plus dans la liste | Supprimer puis GET /api/comptes | Compte absent de la liste | Pass |
+| TC-050 | Suppression en cascade des transactions associees | Compte avec 2 transactions + DELETE | transactionsSupprimees = 2 | Pass |
 
 ### 8.10 Scenarios bout-en-bout (Integration)
 

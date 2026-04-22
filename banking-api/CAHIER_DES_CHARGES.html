@@ -752,28 +752,28 @@ aux clients de gerer leurs comptes, effectuer des depots et des retraits.</p>
 <td>Suppression valide d&#39;un compte existant</td>
 <td>ID UUID valide</td>
 <td>HTTP 200 + succes: true + compteSupprime</td>
-<td>Not Executed</td>
+<td>Pass</td>
 </tr>
 <tr>
 <td>TC-048</td>
 <td>Suppression d&#39;un compte inexistant</td>
 <td>UUID non cree</td>
 <td>HTTP 404 + &quot;Compte introuvable&quot;</td>
-<td>Not Executed</td>
+<td>Pass</td>
 </tr>
 <tr>
 <td>TC-049</td>
 <td>Apres suppression, le compte ne figure plus dans la liste</td>
 <td>Supprimer puis GET /api/comptes</td>
 <td>Compte absent de la liste</td>
-<td>Not Executed</td>
+<td>Pass</td>
 </tr>
 <tr>
 <td>TC-050</td>
 <td>Suppression en cascade des transactions associees</td>
 <td>Compte avec 2 transactions + DELETE</td>
 <td>transactionsSupprimees = 2</td>
-<td>Not Executed</td>
+<td>Pass</td>
 </tr>
 </tbody></table>
 <h3>8.10 Scenarios bout-en-bout (Integration)</h3>
