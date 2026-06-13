@@ -1,0 +1,100 @@
+.page {
+  min-height: calc(100vh - 64px);
+  padding: 32px 24px;
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.formCard, .summaryCard, .infoCard { display: flex; flex-direction: column; gap: 20px; }
+.cardTitle { font-size: 15px; font-weight: 600; color: var(--text-1); }
+
+.form { display: flex; flex-direction: column; gap: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; font-weight: 500; color: var(--text-2); }
+.opt { color: var(--text-3); font-weight: 400; }
+
+.section { }
+.sectionLabel {
+  font-size: 12px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.accountBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.accountAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.accountName  { font-size: 14px; font-weight: 600; color: var(--text-1); }
+.accountSolde { font-size: 13px; color: var(--green); margin-top: 2px; }
+
+.loading, .noAccounts { font-size: 13px; color: var(--text-3); padding: 8px 0; }
+
+/* --- Summary --- */
+.summaryCol { display: flex; flex-direction: column; gap: 16px; }
+
+.summaryRows { display: flex; flex-direction: column; gap: 14px; }
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.summaryRow:last-child { border-bottom: none; padding-bottom: 0; }
+.summaryKey { font-size: 13px; color: var(--text-3); }
+.summaryVal { font-size: 14px; font-weight: 600; color: var(--text-1); }
+.highlight { color: var(--blue-light); font-size: 16px; }
+
+.infoCard { background: rgba(30,111,224,0.08); border-color: rgba(30,111,224,0.2); }
+.infoTitle { font-size: 13px; font-weight: 600; color: var(--blue-light); margin-bottom: 6px; }
+.infoText  { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
+  .summaryCol { order: -1; }
+}

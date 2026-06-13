@@ -1,0 +1,47 @@
+.card {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow 0.15s, transform 0.12s, border-color 0.15s;
+}
+.card:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  transform: translateY(-2px);
+  border-color: rgba(30,111,224,0.3);
+}
+
+.initials {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.info { flex: 1; min-width: 0; }
+
+.name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.date { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+.solde {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--green);
+  white-space: nowrap;
+}

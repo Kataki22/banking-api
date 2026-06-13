@@ -1,0 +1,150 @@
+.page {
+  min-height: calc(100vh - 64px);
+  padding: 32px 24px;
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-3);
+}
+
+.balanceCard {
+  background: linear-gradient(135deg, #1a3a6b 0%, #112240 60%, #0d1f3c 100%);
+  border: 1px solid rgba(30,111,224,0.3);
+  border-radius: 20px;
+  padding: 28px 32px;
+  box-shadow: 0 8px 32px rgba(30,111,224,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.balanceTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.balanceLabel {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.balanceAmount {
+  font-size: 38px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1px;
+}
+
+.cardChip { display: flex; align-items: center; }
+.chip {
+  width: 44px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 6px;
+  opacity: 0.85;
+}
+
+.balanceBottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.cardOwner {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.cardSub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 3px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.statValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+.statValue.green { color: var(--green); }
+.statValue.red   { color: var(--red); }
+.statCount {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.actionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.actionBtn span {
+  font-size: 20px;
+  font-style: normal;
+}
+
+.histCard { padding: 24px; }
+
+.histHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.histHeader h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+@media (max-width: 640px) {
+  .statsGrid    { grid-template-columns: 1fr 1fr; }
+  .quickActions { grid-template-columns: 1fr 1fr; }
+  .balanceAmount { font-size: 28px; }
+}

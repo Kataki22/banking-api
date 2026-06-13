@@ -1,0 +1,116 @@
+.page {
+  min-height: calc(100vh - 64px);
+  padding: 32px 24px;
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-3);
+}
+
+.header { display: flex; flex-direction: column; gap: 16px; }
+.backBtn { align-self: flex-start; font-size: 13px; padding: 6px 12px; }
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.name  { font-size: 22px; font-weight: 700; color: var(--text-1); }
+.email { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+.date  { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+.soldeBox {
+  margin-left: auto;
+  text-align: right;
+}
+.soldeLabel {
+  font-size: 12px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.solde {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* --- Tabs --- */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.tab, .tabActive {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.tabActive { color: var(--blue-light); border-bottom-color: var(--blue-light); }
+.tab:hover { color: var(--text-1); }
+
+/* --- Operations --- */
+.opsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.opCard { display: flex; flex-direction: column; gap: 16px; }
+.opTitle { font-size: 15px; font-weight: 600; color: var(--text-1); }
+.opForm { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; color: var(--text-2); font-weight: 500; }
+.opt { color: var(--text-3); font-weight: 400; }
+
+.opForm button { margin-top: 4px; }
+
+/* --- Danger --- */
+.dangerCard { display: flex; flex-direction: column; gap: 12px; }
+.dangerTitle { font-size: 15px; font-weight: 600; color: var(--red); }
+.dangerText  { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+/* --- History --- */
+.histCard { overflow: hidden; }
+
+@media (max-width: 640px) {
+  .headerContent { flex-direction: column; align-items: flex-start; }
+  .soldeBox { margin-left: 0; text-align: left; }
+}
