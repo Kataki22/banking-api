@@ -24,8 +24,8 @@
   font-weight: 700;
   flex-shrink: 0;
 }
-.iconCredit { background: rgba(34,197,94,0.15);  color: var(--green); }
-.iconDebit  { background: rgba(249,115,22,0.15); color: var(--orange); }
+.iconCredit { background: #dcfce7; color: #15803d; }
+.iconDebit  { background: #ffedd5; color: #c2410c; }
 
 .info { flex: 1; min-width: 0; }
 .label {

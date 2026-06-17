@@ -4,14 +4,14 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: radial-gradient(ellipse at top, rgba(30,111,224,0.12) 0%, transparent 60%), var(--navy);
+  background: linear-gradient(160deg, #e8eef7 0%, #f4f6f9 50%, #edf2fb 100%);
 }
 
 .card {
-  background: var(--navy-light);
+  background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 20px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(26,58,92,0.12);
   padding: 40px 36px;
   width: 100%;
   max-width: 440px;
@@ -31,7 +31,7 @@
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: var(--text-1);
+  color: var(--navy);
   margin-bottom: 4px;
 }
 

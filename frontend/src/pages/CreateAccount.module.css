@@ -12,12 +12,12 @@
 .title {
   font-size: 20px;
   font-weight: 700;
-  color: #2d3748;
+  color: var(--text-1);
   margin-bottom: 4px;
 }
 
 .sub {
-  color: #718096;
+  color: var(--text-3);
   font-size: 13px;
   margin-bottom: 24px;
 }
@@ -37,7 +37,7 @@
 .field label {
   font-size: 13px;
   font-weight: 600;
-  color: #4a5568;
+  color: var(--text-2);
 }
 
 .actions {

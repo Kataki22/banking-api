@@ -1,6 +1,7 @@
 .page {
   min-height: calc(100vh - 64px);
   padding: 32px 24px;
+  background: var(--bg);
 }
 
 .inner {
@@ -20,11 +21,11 @@
 }
 
 .balanceCard {
-  background: linear-gradient(135deg, #1a3a6b 0%, #112240 60%, #0d1f3c 100%);
-  border: 1px solid rgba(30,111,224,0.3);
-  border-radius: 20px;
+  background: linear-gradient(135deg, #1a3a5c 0%, #1e4976 60%, #163354 100%);
+  border: none;
+  border-radius: 16px;
   padding: 28px 32px;
-  box-shadow: 0 8px 32px rgba(30,111,224,0.2);
+  box-shadow: 0 6px 24px rgba(26,58,92,0.25);
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -55,9 +56,9 @@
 .chip {
   width: 44px;
   height: 34px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  background: linear-gradient(135deg, #d4a017, #f0c040);
   border-radius: 6px;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .balanceBottom {
@@ -85,9 +86,14 @@
 }
 
 .statCard {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  box-shadow: var(--shadow-sm);
 }
 
 .statLabel {
@@ -122,14 +128,19 @@
   padding: 14px 10px;
   border-radius: 12px;
   font-size: 13px;
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  box-shadow: var(--shadow-sm);
 }
+.actionBtn:hover { background: #f8fafc; border-color: #cbd5e1; }
 
 .actionBtn span {
   font-size: 20px;
   font-style: normal;
 }
 
-.histCard { padding: 24px; }
+.histCard { padding: 24px; background: #fff; }
 
 .histHeader {
   display: flex;

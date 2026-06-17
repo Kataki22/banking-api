@@ -1,9 +1,10 @@
 .nav {
-  background: var(--navy-light);
-  border-bottom: 1px solid var(--border);
+  background: var(--blue);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 8px rgba(26,58,92,0.15);
 }
 
 .inner {
@@ -22,11 +23,11 @@
   gap: 10px;
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-1);
+  color: #fff;
   white-space: nowrap;
 }
 .logoIcon { font-size: 22px; }
-.logoSub  { color: var(--blue-light); }
+.logoSub  { color: rgba(255,255,255,0.75); font-weight: 400; }
 
 .links {
   display: flex;
@@ -39,11 +40,11 @@
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-2);
+  color: rgba(255,255,255,0.7);
   transition: background 0.15s, color 0.15s;
 }
-.link:hover  { background: rgba(255,255,255,0.06); color: var(--text-1); }
-.link.active { background: rgba(30,111,224,0.15); color: var(--blue-light); }
+.link:hover  { background: rgba(255,255,255,0.12); color: #fff; }
+.link.active { background: rgba(255,255,255,0.18); color: #fff; font-weight: 600; }
 
 .right {
   display: flex;
@@ -55,7 +56,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  background: rgba(255,255,255,0.2);
   color: #fff;
   font-size: 13px;
   font-weight: 700;
@@ -63,6 +64,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.3);
 }
 
 .userInfo {
@@ -70,16 +72,20 @@
   flex-direction: column;
   line-height: 1.2;
 }
-.userName  { font-size: 13px; font-weight: 600; color: var(--text-1); }
-.userEmail { font-size: 11px; color: var(--text-3); }
+.userName  { font-size: 13px; font-weight: 600; color: #fff; }
+.userEmail { font-size: 11px; color: rgba(255,255,255,0.55); }
 
 .logoutBtn {
   font-size: 13px;
   padding: 7px 14px;
   border-radius: 8px;
+  background: rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
 }
+.logoutBtn:hover { background: rgba(255,255,255,0.25) !important; }
 
 @media (max-width: 640px) {
-  .links   { display: none; }
+  .links    { display: none; }
   .userInfo { display: none; }
 }
