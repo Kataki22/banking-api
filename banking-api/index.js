@@ -6,7 +6,26 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const db = require("./db");
 
 const app = express();
-app.use(cors({ origin: /^http:\/\/localhost:\d+$/ }));
+
+// CORS : autorise localhost (dev), le domaine Render, et CORS_ORIGIN si défini
+const ALLOWED_ORIGINS = [
+  /^http:\/\/localhost:\d+$/,
+  /^https:\/\/.*\.onrender\.com$/,
+];
+if (process.env.CORS_ORIGIN) {
+  ALLOWED_ORIGINS.push(process.env.CORS_ORIGIN);
+}
+
+app.use(cors({
+  origin(origin, cb) {
+    // Requêtes same-origin (pas d'en-tête Origin) → autorisé
+    if (!origin) return cb(null, true);
+    const ok = ALLOWED_ORIGINS.some((o) =>
+      typeof o === "string" ? o === origin : o.test(origin)
+    );
+    cb(null, ok);
+  },
+}));
 app.use(express.json());
 
 // --- Configuration Swagger ---
