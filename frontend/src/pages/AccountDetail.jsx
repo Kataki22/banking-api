@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getCompte, getTransactions, depot, retrait, deleteCompte } from "../api";
@@ -6,21 +8,23 @@ import TransactionList from "../components/TransactionList";
 import ConfirmDelete from "../components/ConfirmDelete";
 import { Skeleton, SkeletonCard } from "../components/Skeleton";
 import { useToast } from "../context/ToastContext";
+import { operationSchema } from "../validation";
 import styles from "./AccountDetail.module.css";
 
 function OpForm({ title, btnClass, btnLabel, onSubmit, loading }) {
-  const [montant, setMontant] = useState("");
-  const [desc, setDesc] = useState("");
   const { showToast } = useToast();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(operationSchema), defaultValues: { montant: "", description: "" } });
 
-  async function handle(e) {
-    e.preventDefault();
-    const val = parseFloat(montant);
-    if (!val || val <= 0) { showToast("Montant invalide.", "error"); return; }
-    const msg = await onSubmit(val, desc.trim() || undefined);
+  async function handle(data) {
+    const msg = await onSubmit(parseFloat(data.montant), data.description?.trim() || undefined);
     if (msg.succes) {
       showToast(msg.message, "success");
-      setMontant(""); setDesc("");
+      reset();
     } else {
       showToast(msg.message, "error");
     }
@@ -29,23 +33,19 @@ function OpForm({ title, btnClass, btnLabel, onSubmit, loading }) {
   return (
     <div className={`card ${styles.opCard}`}>
       <h3 className={styles.opTitle}>{title}</h3>
-      <form onSubmit={handle} className={styles.opForm}>
+      <form onSubmit={handleSubmit(handle)} className={styles.opForm}>
         <div className={styles.field}>
           <label>Montant (FCFA)</label>
-          <input
-            type="number"
-            min="1"
-            step="any"
-            value={montant}
-            onChange={(e) => setMontant(e.target.value)}
-            placeholder="Ex : 5000"
-          />
+          <input type="number" min="1" step="any" {...register("montant")} placeholder="Ex : 5000" />
+          {errors.montant && <p className="error-msg">{errors.montant.message}</p>}
         </div>
         <div className={styles.field}>
           <label>Description <span className={styles.opt}>(optionnel)</span></label>
-          <input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Ex : Salaire" />
+          <input {...register("description")} placeholder="Ex : Salaire" />
         </div>
-        <button type="submit" className={btnClass} disabled={loading}>{btnLabel}</button>
+        <button type="submit" className={btnClass} disabled={loading || isSubmitting}>
+          {btnLabel}
+        </button>
       </form>
     </div>
   );
@@ -82,7 +82,6 @@ export default function AccountDetail() {
     return (
       <div className={styles.page}>
         <div className={styles.inner}>
-          {/* Header squelette */}
           <SkeletonCard>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <Skeleton width={56} height={56} radius="50%" />
@@ -97,14 +96,10 @@ export default function AccountDetail() {
               </div>
             </div>
           </SkeletonCard>
-
-          {/* Onglets squelette */}
           <div style={{ display: "flex", gap: 8, margin: "16px 0" }}>
             <Skeleton width={110} height={34} radius={8} />
             <Skeleton width={130} height={34} radius={8} />
           </div>
-
-          {/* Formulaires squelette */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             <SkeletonCard>
               <Skeleton width="60%" height={16} style={{ marginBottom: 16 }} />
@@ -125,15 +120,13 @@ export default function AccountDetail() {
       </div>
     );
   }
-  if (error)   return <div className={`${styles.center} error-msg`}>⚠ {error}</div>;
+  if (error) return <div className={`${styles.center} error-msg`}>⚠ {error}</div>;
 
   const isOwn = id === user?.id;
 
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-
-        {/* Header compte */}
         <div className={`card ${styles.header}`}>
           <button className={`btn-ghost ${styles.backBtn}`} onClick={() => navigate("/")}>← Retour</button>
           <div className={styles.headerContent}>
@@ -152,7 +145,6 @@ export default function AccountDetail() {
           </div>
         </div>
 
-        {/* Onglets */}
         <div className={styles.tabs}>
           <button className={tab === "operations" ? styles.tabActive : styles.tab} onClick={() => setTab("operations")}>
             Opérations
@@ -208,9 +200,7 @@ export default function AccountDetail() {
         {showDelete && (
           <ConfirmDelete
             compte={compte}
-            onConfirm={() => {
-              deleteCompte(id).then(() => navigate("/"));
-            }}
+            onConfirm={() => { deleteCompte(id).then(() => navigate("/")); }}
             onCancel={() => setShowDelete(false)}
           />
         )}

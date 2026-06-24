@@ -1,9 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { getComptes, virement } from "../api";
 import { Skeleton } from "../components/Skeleton";
+import { virementSchema } from "../validation";
 import styles from "./TransferPage.module.css";
 
 export default function TransferPage() {
@@ -11,11 +14,18 @@ export default function TransferPage() {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [comptes, setComptes] = useState([]);
-  const [destinataireId, setDestinataire] = useState("");
-  const [montant, setMontant] = useState("");
-  const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(virementSchema), defaultValues: { destinataireId: "", montant: "", description: "" } });
+
+  const destinataireId = watch("destinataireId");
+  const montant = watch("montant");
 
   useEffect(() => {
     getComptes()
@@ -25,26 +35,19 @@ export default function TransferPage() {
       .finally(() => setLoadingList(false));
   }, [user.id]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const val = parseFloat(montant);
-    if (!destinataireId) { showToast("Choisissez un destinataire.", "error"); return; }
-    if (!val || val <= 0) { showToast("Montant invalide.", "error"); return; }
-
-    setLoading(true);
+  async function onSubmit(data) {
     try {
-      const data = await virement(user.id, destinataireId, val, description.trim() || undefined);
-      if (data.succes) {
-        updateUser(data.donnees.source);
-        showToast(data.message, "success");
-        setMontant(""); setDescription(""); setDestinataire("");
+      const val = parseFloat(data.montant);
+      const res = await virement(user.id, data.destinataireId, val, data.description?.trim() || undefined);
+      if (res.succes) {
+        updateUser(res.donnees.source);
+        showToast(res.message, "success");
+        reset();
       } else {
-        showToast(data.message, "error");
+        showToast(res.message, "error");
       }
     } catch {
       showToast("Impossible de contacter le serveur.", "error");
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -54,19 +57,17 @@ export default function TransferPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <div className={styles.topRow}>
-          <button className="btn-ghost" style={{fontSize:"13px",padding:"6px 12px"}} onClick={() => navigate("/")}>
+          <button className="btn-ghost" style={{ fontSize: "13px", padding: "6px 12px" }} onClick={() => navigate("/")}>
             ← Retour
           </button>
           <h2 className={styles.pageTitle}>Effectuer un virement</h2>
         </div>
 
         <div className={styles.grid}>
-          {/* Formulaire */}
           <div className={`card ${styles.formCard}`}>
             <h3 className={styles.cardTitle}>Détails du virement</h3>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
-              {/* Expéditeur */}
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
               <div className={styles.section}>
                 <p className={styles.sectionLabel}>De votre compte</p>
                 <div className={styles.accountBox}>
@@ -80,7 +81,6 @@ export default function TransferPage() {
                 </div>
               </div>
 
-              {/* Destinataire */}
               <div className={styles.field}>
                 <label>Destinataire</label>
                 {loadingList ? (
@@ -92,7 +92,7 @@ export default function TransferPage() {
                 ) : comptes.length === 0 ? (
                   <p className={styles.noAccounts}>Aucun autre compte disponible.</p>
                 ) : (
-                  <select value={destinataireId} onChange={(e) => setDestinataire(e.target.value)}>
+                  <select {...register("destinataireId")}>
                     <option value="">-- Sélectionner un compte --</option>
                     {comptes.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -101,43 +101,31 @@ export default function TransferPage() {
                     ))}
                   </select>
                 )}
+                {errors.destinataireId && <p className="error-msg">{errors.destinataireId.message}</p>}
               </div>
 
-              {/* Montant */}
               <div className={styles.field}>
                 <label>Montant (FCFA)</label>
-                <input
-                  type="number"
-                  min="1"
-                  step="any"
-                  value={montant}
-                  onChange={(e) => setMontant(e.target.value)}
-                  placeholder="Ex : 10000"
-                />
+                <input type="number" min="1" step="any" {...register("montant")} placeholder="Ex : 10000" />
+                {errors.montant && <p className="error-msg">{errors.montant.message}</p>}
               </div>
 
-              {/* Description */}
               <div className={styles.field}>
                 <label>Motif <span className={styles.opt}>(optionnel)</span></label>
-                <input
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Ex : Remboursement loyer"
-                />
+                <input {...register("description")} placeholder="Ex : Remboursement loyer" />
               </div>
 
               <button
                 type="submit"
                 className="btn-primary"
                 style={{ width: "100%", padding: "13px" }}
-                disabled={loading || !destinataireId || !montant}
+                disabled={isSubmitting}
               >
-                {loading ? "Traitement..." : "Confirmer le virement"}
+                {isSubmitting ? "Traitement..." : "Confirmer le virement"}
               </button>
             </form>
           </div>
 
-          {/* Résumé */}
           <div className={styles.summaryCol}>
             <div className={`card ${styles.summaryCard}`}>
               <h3 className={styles.cardTitle}>Résumé</h3>

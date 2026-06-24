@@ -1,51 +1,34 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { register } from "../api";
+import { register as registerApi } from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { registerSchema } from "../validation";
 import styles from "./AuthPage.module.css";
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ prenom: "", nom: "", email: "", pin: "", pinConfirm: "" });
-  const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  function set(field) {
-    return (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(registerSchema) });
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const { prenom, nom, email, pin, pinConfirm } = form;
-
-    if (!prenom.trim() || !nom.trim() || !email.trim() || !pin) {
-      showToast("Tous les champs sont requis.", "error");
-      return;
-    }
-    if (!/^\d{4}$/.test(pin)) {
-      showToast("Le PIN doit être composé de 4 chiffres.", "error");
-      return;
-    }
-    if (pin !== pinConfirm) {
-      showToast("Les deux PIN ne correspondent pas.", "error");
-      return;
-    }
-
-    setLoading(true);
+  async function onSubmit(data) {
     try {
-      const data = await register(nom.trim(), prenom.trim(), email.trim(), pin);
-      if (data.succes) {
-        signIn(data.donnees);
+      const res = await registerApi(data.nom, data.prenom, data.email, data.pin);
+      if (res.succes) {
+        signIn(res.donnees);
         navigate("/");
       } else {
-        showToast(data.message || "Erreur lors de la création du compte.", "error");
+        showToast(res.message || "Erreur lors de la création du compte.", "error");
       }
     } catch {
       showToast("Impossible de contacter le serveur.", "error");
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -58,20 +41,28 @@ export default function RegisterPage() {
           <p className={styles.sub}>Rejoignez NYAJ Banking gratuitement</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <div className={styles.row}>
             <div className={styles.field}>
               <label>Prénom</label>
-              <input value={form.prenom} onChange={set("prenom")} placeholder="Jean" autoFocus />
+              <input {...register("prenom")} placeholder="Jean" autoFocus />
+              {errors.prenom && <p className="error-msg">{errors.prenom.message}</p>}
             </div>
             <div className={styles.field}>
               <label>Nom</label>
-              <input value={form.nom} onChange={set("nom")} placeholder="Dupont" />
+              <input {...register("nom")} placeholder="Dupont" />
+              {errors.nom && <p className="error-msg">{errors.nom.message}</p>}
             </div>
           </div>
           <div className={styles.field}>
             <label>Adresse email</label>
-            <input type="email" value={form.email} onChange={set("email")} placeholder="jean.dupont@email.com" autoComplete="email" />
+            <input
+              type="email"
+              {...register("email")}
+              placeholder="jean.dupont@email.com"
+              autoComplete="email"
+            />
+            {errors.email && <p className="error-msg">{errors.email.message}</p>}
           </div>
           <div className={styles.row}>
             <div className={styles.field}>
@@ -80,11 +71,11 @@ export default function RegisterPage() {
                 type="password"
                 inputMode="numeric"
                 maxLength={4}
-                value={form.pin}
-                onChange={(e) => setForm((f) => ({ ...f, pin: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
+                {...register("pin")}
                 placeholder="••••"
                 autoComplete="new-password"
               />
+              {errors.pin && <p className="error-msg">{errors.pin.message}</p>}
             </div>
             <div className={styles.field}>
               <label>Confirmer le PIN</label>
@@ -92,15 +83,19 @@ export default function RegisterPage() {
                 type="password"
                 inputMode="numeric"
                 maxLength={4}
-                value={form.pinConfirm}
-                onChange={(e) => setForm((f) => ({ ...f, pinConfirm: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
+                {...register("pinConfirm")}
                 placeholder="••••"
               />
+              {errors.pinConfirm && <p className="error-msg">{errors.pinConfirm.message}</p>}
             </div>
           </div>
 
-          <button type="submit" className={`btn-primary ${styles.submitBtn}`} disabled={loading}>
-            {loading ? "Création..." : "Créer mon compte"}
+          <button
+            type="submit"
+            className={`btn-primary ${styles.submitBtn}`}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Création..." : "Créer mon compte"}
           </button>
         </form>
 

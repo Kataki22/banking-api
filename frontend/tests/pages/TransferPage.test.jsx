@@ -123,11 +123,11 @@ describe("TransferPage — validation", () => {
     );
   });
 
-  it("le bouton est désactivé sans destinataire et montant", async () => {
+  it("le bouton est actif même sans destinataire ni montant", async () => {
     renderTransfer();
     await waitFor(() => {
       const btn = screen.getByRole("button", { name: /Confirmer le virement/i });
-      expect(btn).toBeDisabled();
+      expect(btn).not.toBeDisabled();
     });
   });
 });
