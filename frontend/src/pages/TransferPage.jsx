@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { getComptes, virement } from "../api";
+import { Skeleton } from "../components/Skeleton";
 import styles from "./TransferPage.module.css";
 
 export default function TransferPage() {
   const { user, updateUser } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [comptes, setComptes] = useState([]);
   const [destinataireId, setDestinataire] = useState("");
@@ -13,8 +16,6 @@ export default function TransferPage() {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     getComptes()
@@ -27,29 +28,27 @@ export default function TransferPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     const val = parseFloat(montant);
-    if (!destinataireId) { setError("Choisissez un destinataire."); return; }
-    if (!val || val <= 0) { setError("Montant invalide."); return; }
+    if (!destinataireId) { showToast("Choisissez un destinataire.", "error"); return; }
+    if (!val || val <= 0) { showToast("Montant invalide.", "error"); return; }
 
     setLoading(true);
-    setError(null);
-    setSuccess(null);
     try {
       const data = await virement(user.id, destinataireId, val, description.trim() || undefined);
       if (data.succes) {
         updateUser(data.donnees.source);
-        setSuccess(data.message);
+        showToast(data.message, "success");
         setMontant(""); setDescription(""); setDestinataire("");
       } else {
-        setError(data.message);
+        showToast(data.message, "error");
       }
     } catch {
-      setError("Impossible de contacter le serveur.");
+      showToast("Impossible de contacter le serveur.", "error");
     } finally {
       setLoading(false);
     }
   }
 
-  const dest = comptes.find((c) => c.id === destinataireId);
+  const dest = useMemo(() => comptes.find((c) => c.id === destinataireId), [comptes, destinataireId]);
 
   return (
     <div className={styles.page}>
@@ -85,7 +84,11 @@ export default function TransferPage() {
               <div className={styles.field}>
                 <label>Destinataire</label>
                 {loadingList ? (
-                  <p className={styles.loading}>Chargement des comptes...</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {[1, 2, 3, 4].map((i) => (
+                      <Skeleton key={i} height={38} radius={8} />
+                    ))}
+                  </div>
                 ) : comptes.length === 0 ? (
                   <p className={styles.noAccounts}>Aucun autre compte disponible.</p>
                 ) : (
@@ -122,9 +125,6 @@ export default function TransferPage() {
                   placeholder="Ex : Remboursement loyer"
                 />
               </div>
-
-              {error   && <p className="error-msg">⚠ {error}</p>}
-              {success && <p className="success-msg">✓ {success}</p>}
 
               <button
                 type="submit"

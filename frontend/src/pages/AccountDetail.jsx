@@ -4,25 +4,25 @@ import { useAuth } from "../context/AuthContext";
 import { getCompte, getTransactions, depot, retrait, deleteCompte } from "../api";
 import TransactionList from "../components/TransactionList";
 import ConfirmDelete from "../components/ConfirmDelete";
+import { Skeleton, SkeletonCard } from "../components/Skeleton";
+import { useToast } from "../context/ToastContext";
 import styles from "./AccountDetail.module.css";
 
 function OpForm({ title, btnClass, btnLabel, onSubmit, loading }) {
   const [montant, setMontant] = useState("");
   const [desc, setDesc] = useState("");
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const { showToast } = useToast();
 
   async function handle(e) {
     e.preventDefault();
     const val = parseFloat(montant);
-    if (!val || val <= 0) { setError("Montant invalide."); return; }
-    setError(null); setSuccess(null);
+    if (!val || val <= 0) { showToast("Montant invalide.", "error"); return; }
     const msg = await onSubmit(val, desc.trim() || undefined);
     if (msg.succes) {
-      setSuccess(msg.message);
+      showToast(msg.message, "success");
       setMontant(""); setDesc("");
     } else {
-      setError(msg.message);
+      showToast(msg.message, "error");
     }
   }
 
@@ -45,8 +45,6 @@ function OpForm({ title, btnClass, btnLabel, onSubmit, loading }) {
           <label>Description <span className={styles.opt}>(optionnel)</span></label>
           <input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Ex : Salaire" />
         </div>
-        {error   && <p className="error-msg">⚠ {error}</p>}
-        {success && <p className="success-msg">✓ {success}</p>}
         <button type="submit" className={btnClass} disabled={loading}>{btnLabel}</button>
       </form>
     </div>
@@ -56,6 +54,7 @@ function OpForm({ title, btnClass, btnLabel, onSubmit, loading }) {
 export default function AccountDetail() {
   const { id } = useParams();
   const { user, updateUser } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [compte, setCompte] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -73,12 +72,59 @@ export default function AccountDetail() {
       if (id === user?.id) updateUser(cData.donnees);
     } catch {
       setError("Impossible de contacter le serveur.");
+      showToast("Impossible de contacter le serveur.", "error");
     }
   }
 
   useEffect(() => { refresh().finally(() => setLoading(false)); }, [id]);
 
-  if (loading) return <div className={styles.center}>Chargement...</div>;
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.inner}>
+          {/* Header squelette */}
+          <SkeletonCard>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <Skeleton width={56} height={56} radius="50%" />
+              <div style={{ flex: 1 }}>
+                <Skeleton width="50%" height={18} />
+                <Skeleton width="35%" height={14} style={{ marginTop: 6 }} />
+                <Skeleton width="45%" height={12} style={{ marginTop: 4 }} />
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <Skeleton width={50} height={12} />
+                <Skeleton width={120} height={24} style={{ marginTop: 4 }} />
+              </div>
+            </div>
+          </SkeletonCard>
+
+          {/* Onglets squelette */}
+          <div style={{ display: "flex", gap: 8, margin: "16px 0" }}>
+            <Skeleton width={110} height={34} radius={8} />
+            <Skeleton width={130} height={34} radius={8} />
+          </div>
+
+          {/* Formulaires squelette */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <SkeletonCard>
+              <Skeleton width="60%" height={16} style={{ marginBottom: 16 }} />
+              <Skeleton height={40} style={{ marginBottom: 12 }} />
+              <Skeleton height={14} style={{ marginBottom: 8 }} />
+              <Skeleton height={40} style={{ marginBottom: 16 }} />
+              <Skeleton width="40%" height={36} radius={8} />
+            </SkeletonCard>
+            <SkeletonCard>
+              <Skeleton width="60%" height={16} style={{ marginBottom: 16 }} />
+              <Skeleton height={40} style={{ marginBottom: 12 }} />
+              <Skeleton height={14} style={{ marginBottom: 8 }} />
+              <Skeleton height={40} style={{ marginBottom: 16 }} />
+              <Skeleton width="40%" height={36} radius={8} />
+            </SkeletonCard>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (error)   return <div className={`${styles.center} error-msg`}>⚠ {error}</div>;
 
   const isOwn = id === user?.id;

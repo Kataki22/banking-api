@@ -2,34 +2,34 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import styles from "./AuthPage.module.css";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!email.trim() || !pin.trim()) {
-      setError("Tous les champs sont requis.");
+      showToast("Tous les champs sont requis.", "error");
       return;
     }
     setLoading(true);
-    setError(null);
     try {
       const data = await login(email.trim(), pin.trim());
       if (data.succes) {
         signIn(data.donnees);
         navigate("/");
       } else {
-        setError(data.message || "Email ou PIN incorrect.");
+        showToast(data.message || "Email ou PIN incorrect.", "error");
       }
     } catch {
-      setError("Impossible de contacter le serveur. Vérifiez que le backend tourne sur le port 3000.");
+      showToast("Impossible de contacter le serveur.", "error");
     } finally {
       setLoading(false);
     }
@@ -68,8 +68,6 @@ export default function LoginPage() {
               autoComplete="current-password"
             />
           </div>
-
-          {error && <p className="error-msg">⚠ {error}</p>}
 
           <button type="submit" className={`btn-primary ${styles.submitBtn}`} disabled={loading}>
             {loading ? "Connexion..." : "Se connecter"}

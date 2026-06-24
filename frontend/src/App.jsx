@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -18,16 +20,16 @@ function AppRoutes() {
     <BrowserRouter>
       {user && <Navbar />}
       <Routes>
-        <Route path="/login"    element={user ? <Navigate to="/" replace /> : <LoginPage />} />
-        <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage />} />
+        <Route path="/login"    element={user ? <Navigate to="/" replace /> : <ErrorBoundary><LoginPage /></ErrorBoundary>} />
+        <Route path="/register" element={user ? <Navigate to="/" replace /> : <ErrorBoundary><RegisterPage /></ErrorBoundary>} />
         <Route path="/" element={
-          <ProtectedRoute><Dashboard /></ProtectedRoute>
+          <ProtectedRoute><ErrorBoundary><Dashboard /></ErrorBoundary></ProtectedRoute>
         } />
         <Route path="/comptes/:id" element={
-          <ProtectedRoute><AccountDetail /></ProtectedRoute>
+          <ProtectedRoute><ErrorBoundary><AccountDetail /></ErrorBoundary></ProtectedRoute>
         } />
         <Route path="/virement" element={
-          <ProtectedRoute><TransferPage /></ProtectedRoute>
+          <ProtectedRoute><ErrorBoundary><TransferPage /></ErrorBoundary></ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -38,7 +40,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <ToastProvider>
+        <AppRoutes />
+      </ToastProvider>
     </AuthProvider>
   );
 }

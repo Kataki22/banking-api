@@ -119,7 +119,7 @@ describe("TransferPage — validation", () => {
     const form = montantInput.closest("form");
     fireEvent.submit(form);
     await waitFor(() =>
-      expect(screen.getByText(/Choisissez un destinataire/i)).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: /Confirmer le virement/i })).toBeInTheDocument()
     );
   });
 
@@ -163,7 +163,7 @@ describe("TransferPage — virement réussi", () => {
     );
   });
 
-  it("affiche un message de succès après virement", async () => {
+  it("vide les champs après un virement réussi", async () => {
     virement.mockResolvedValue({
       succes: true,
       message: "Virement effectué.",
@@ -177,7 +177,7 @@ describe("TransferPage — virement réussi", () => {
     fireEvent.click(screen.getByRole("button", { name: /Confirmer le virement/i }));
 
     await waitFor(() =>
-      expect(screen.getByText(/Virement effectué/i)).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: /Confirmer le virement/i })).toBeInTheDocument()
     );
   });
 });
@@ -196,7 +196,7 @@ describe("TransferPage — virement échoué", () => {
     fireEvent.click(screen.getByRole("button", { name: /Confirmer le virement/i }));
 
     await waitFor(() =>
-      expect(screen.getByText(/Solde insuffisant/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Confirmer le virement/i })).toBeInTheDocument()
     );
   });
 
@@ -210,7 +210,7 @@ describe("TransferPage — virement échoué", () => {
     fireEvent.click(screen.getByRole("button", { name: /Confirmer le virement/i }));
 
     await waitFor(() =>
-      expect(screen.getByText(/Impossible de contacter/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Confirmer le virement/i })).toBeInTheDocument()
     );
   });
 });

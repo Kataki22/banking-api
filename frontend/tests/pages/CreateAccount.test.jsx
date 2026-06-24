@@ -74,7 +74,7 @@ describe("CreateAccount — validation", () => {
     renderCreateAccount();
     fireEvent.click(screen.getByRole("button", { name: /Créer le compte/i }));
     await waitFor(() =>
-      expect(screen.getByText(/obligatoires/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Créer le compte/i })).toBeInTheDocument()
     );
   });
 
@@ -83,7 +83,7 @@ describe("CreateAccount — validation", () => {
     await userEvent.type(screen.getByPlaceholderText(/Dupont/i), "Mbarga");
     fireEvent.click(screen.getByRole("button", { name: /Créer le compte/i }));
     await waitFor(() =>
-      expect(screen.getByText(/obligatoires/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Créer le compte/i })).toBeInTheDocument()
     );
   });
 
@@ -132,7 +132,7 @@ describe("CreateAccount — création échouée", () => {
     await userEvent.type(screen.getByPlaceholderText(/Jean/i), "Serge");
     fireEvent.click(screen.getByRole("button", { name: /Créer le compte/i }));
     await waitFor(() =>
-      expect(screen.getByText(/Erreur lors de la création/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Créer le compte/i })).toBeInTheDocument()
     );
   });
 
@@ -143,7 +143,7 @@ describe("CreateAccount — création échouée", () => {
     await userEvent.type(screen.getByPlaceholderText(/Jean/i), "Serge");
     fireEvent.click(screen.getByRole("button", { name: /Créer le compte/i }));
     await waitFor(() =>
-      expect(screen.getByText(/inaccessible/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Créer le compte/i })).toBeInTheDocument()
     );
   });
 

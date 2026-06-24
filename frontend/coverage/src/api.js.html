@@ -185,67 +185,67 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const BASE = "https://banking-api-rdlr.onrender.com";
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const BASE = import.meta.env.VITE_API_URL || "";
 &nbsp;
 async function apiFetch(url, options = {}) {
-  const res = await fetch(url, options);
+  const res = await fetch(`${BASE}${url}`, options);
   const data = await res.json();
   return { ...data, status: res.status };
 }
 &nbsp;
 // --- Auth ---
 export const register = (nom, prenom, email, pin) =&gt;
-  apiFetch(`${BASE}/auth/register`, {
+  apiFetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nom, prenom, email, pin }),
   });
 &nbsp;
 export const login = (email, pin) =&gt;
-  apiFetch(`${BASE}/auth/login`, {
+  apiFetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, pin }),
   });
 &nbsp;
 // --- Comptes ---
-export const getComptes = <span class="fstat-no" title="function not covered" >() =&gt; apiFetch(`${BASE}/comptes`);</span>
+export const getComptes = <span class="fstat-no" title="function not covered" >() =&gt; apiFetch("/api/comptes");</span>
 &nbsp;
-export const getCompte = <span class="fstat-no" title="function not covered" >(id) =&gt; apiFetch(`${BASE}/comptes/${id}`);</span>
+export const getCompte = <span class="fstat-no" title="function not covered" >(id) =&gt; apiFetch(`/api/comptes/${id}`);</span>
 &nbsp;
 export const createCompte = <span class="fstat-no" title="function not covered" >(nom, prenom) =&gt;</span>
-<span class="cstat-no" title="statement not covered" >  apiFetch(`${BASE}/comptes`, {</span>
+<span class="cstat-no" title="statement not covered" >  apiFetch("/api/comptes", {</span>
 <span class="cstat-no" title="statement not covered" >    method: "POST",</span>
 <span class="cstat-no" title="statement not covered" >    headers: { "Content-Type": "application/json" },</span>
 <span class="cstat-no" title="statement not covered" >    body: JSON.stringify({ nom, prenom }),</span>
   });
 &nbsp;
 export const deleteCompte = (id) =&gt;
-  apiFetch(`${BASE}/comptes/${id}`, { method: "DELETE" });
+  apiFetch(`/api/comptes/${id}`, { method: "DELETE" });
 &nbsp;
 // --- Transactions ---
 export const depot = <span class="fstat-no" title="function not covered" >(id, montant, description) =&gt;</span>
-<span class="cstat-no" title="statement not covered" >  apiFetch(`${BASE}/comptes/${id}/depot`, {</span>
+<span class="cstat-no" title="statement not covered" >  apiFetch(`/api/comptes/${id}/depot`, {</span>
 <span class="cstat-no" title="statement not covered" >    method: "POST",</span>
 <span class="cstat-no" title="statement not covered" >    headers: { "Content-Type": "application/json" },</span>
 <span class="cstat-no" title="statement not covered" >    body: JSON.stringify({ montant, description }),</span>
   });
 &nbsp;
 export const retrait = <span class="fstat-no" title="function not covered" >(id, montant, description) =&gt;</span>
-<span class="cstat-no" title="statement not covered" >  apiFetch(`${BASE}/comptes/${id}/retrait`, {</span>
+<span class="cstat-no" title="statement not covered" >  apiFetch(`/api/comptes/${id}/retrait`, {</span>
 <span class="cstat-no" title="statement not covered" >    method: "POST",</span>
 <span class="cstat-no" title="statement not covered" >    headers: { "Content-Type": "application/json" },</span>
 <span class="cstat-no" title="statement not covered" >    body: JSON.stringify({ montant, description }),</span>
   });
 &nbsp;
 export const virement = <span class="fstat-no" title="function not covered" >(sourceId, destinataireId, montant, description) =&gt;</span>
-<span class="cstat-no" title="statement not covered" >  apiFetch(`${BASE}/comptes/${sourceId}/virement`, {</span>
+<span class="cstat-no" title="statement not covered" >  apiFetch(`/api/comptes/${sourceId}/virement`, {</span>
 <span class="cstat-no" title="statement not covered" >    method: "POST",</span>
 <span class="cstat-no" title="statement not covered" >    headers: { "Content-Type": "application/json" },</span>
 <span class="cstat-no" title="statement not covered" >    body: JSON.stringify({ destinataireId, montant, description }),</span>
   });
 &nbsp;
-export const getTransactions = <span class="fstat-no" title="function not covered" >(id) =&gt; apiFetch(`${BASE}/comptes/${id}/transactions`);</span>
+export const getTransactions = <span class="fstat-no" title="function not covered" >(id) =&gt; apiFetch(`/api/comptes/${id}/transactions`);</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -253,7 +253,7 @@ export const getTransactions = <span class="fstat-no" title="function not covere
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-17T15:07:40.707Z
+                at 2026-06-24T09:43:51.072Z
             </div>
         <script src="../prettify.js"></script>
         <script>

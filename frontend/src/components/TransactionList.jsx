@@ -7,7 +7,9 @@ const LABELS = {
   virement_reception: { label: "Virement reçu",     badge: "badge-blue",   sign: "+", icon: "←" },
 };
 
-export default function TransactionList({ transactions = [] }) {
+import { memo } from "react";
+
+function TransactionList({ transactions = [] }) {
   if (transactions.length === 0) {
     return <p className={styles.empty}>Aucune transaction pour le moment.</p>;
   }
@@ -38,3 +40,5 @@ export default function TransactionList({ transactions = [] }) {
     </ul>
   );
 }
+
+export default memo(TransactionList);

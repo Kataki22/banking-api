@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { getCompte, getTransactions } from "../api";
 import TransactionList from "../components/TransactionList";
+import { SkeletonBalanceCard, SkeletonStatCards, Skeleton, SkeletonCard, SkeletonListItem } from "../components/Skeleton";
 import styles from "./Dashboard.module.css";
 
 export default function Dashboard() {
   const { user, updateUser } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   async function refresh() {
     try {
@@ -21,7 +23,7 @@ export default function Dashboard() {
       if (cData.succes) updateUser(cData.donnees);
       if (tData.succes) setTransactions(tData.donnees || []);
     } catch {
-      setError("Impossible de contacter le serveur.");
+      showToast("Impossible de contacter le serveur.", "error");
     }
   }
 
@@ -30,12 +32,27 @@ export default function Dashboard() {
   }, [user.id]);
 
   const soldeNum = parseFloat(user.solde) || 0;
-  const depots   = transactions.filter((t) => t.type === "depot" || t.type === "virement_reception");
-  const retraits = transactions.filter((t) => t.type === "retrait" || t.type === "virement_envoi");
-  const totalDepots   = depots.reduce((s, t) => s + (t.montantRaw || 0), 0);
-  const totalRetraits = retraits.reduce((s, t) => s + (t.montantRaw || 0), 0);
+  const depots   = useMemo(() => transactions.filter((t) => t.type === "depot" || t.type === "virement_reception"), [transactions]);
+  const retraits = useMemo(() => transactions.filter((t) => t.type === "retrait" || t.type === "virement_envoi"), [transactions]);
+  const totalDepots   = useMemo(() => depots.reduce((s, t) => s + (t.montantRaw || 0), 0), [depots]);
+  const totalRetraits = useMemo(() => retraits.reduce((s, t) => s + (t.montantRaw || 0), 0), [retraits]);
 
-  if (loading) return <div className={styles.center}>Chargement...</div>;
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.inner}>
+          <SkeletonBalanceCard />
+          <SkeletonStatCards />
+          <SkeletonCard>
+            <Skeleton width={120} height={14} style={{ marginBottom: 16 }} />
+            {[1, 2, 3].map((i) => (
+              <SkeletonListItem key={i} />
+            ))}
+          </SkeletonCard>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -47,7 +64,7 @@ export default function Dashboard() {
             <div>
               <p className={styles.balanceLabel}>Solde disponible</p>
               <p className={styles.balanceAmount}>
-                {loading ? "..." : user.solde}
+                {user.solde}
               </p>
             </div>
             <div className={styles.cardChip}>
@@ -110,7 +127,6 @@ export default function Dashboard() {
               Voir tout
             </button>
           </div>
-          {error && <p className="error-msg">⚠ {error}</p>}
           <TransactionList transactions={transactions.slice(0, 6)} />
         </div>
 

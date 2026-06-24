@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import styles from "./AuthPage.module.css";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ prenom: "", nom: "", email: "", pin: "", pinConfirm: "" });
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   function set(field) {
@@ -20,30 +21,29 @@ export default function RegisterPage() {
     const { prenom, nom, email, pin, pinConfirm } = form;
 
     if (!prenom.trim() || !nom.trim() || !email.trim() || !pin) {
-      setError("Tous les champs sont requis.");
+      showToast("Tous les champs sont requis.", "error");
       return;
     }
     if (!/^\d{4}$/.test(pin)) {
-      setError("Le PIN doit être composé de 4 chiffres.");
+      showToast("Le PIN doit être composé de 4 chiffres.", "error");
       return;
     }
     if (pin !== pinConfirm) {
-      setError("Les deux PIN ne correspondent pas.");
+      showToast("Les deux PIN ne correspondent pas.", "error");
       return;
     }
 
     setLoading(true);
-    setError(null);
     try {
       const data = await register(nom.trim(), prenom.trim(), email.trim(), pin);
       if (data.succes) {
         signIn(data.donnees);
         navigate("/");
       } else {
-        setError(data.message || "Erreur lors de la création du compte.");
+        showToast(data.message || "Erreur lors de la création du compte.", "error");
       }
     } catch {
-      setError("Impossible de contacter le serveur.");
+      showToast("Impossible de contacter le serveur.", "error");
     } finally {
       setLoading(false);
     }
@@ -98,8 +98,6 @@ export default function RegisterPage() {
               />
             </div>
           </div>
-
-          {error && <p className="error-msg">⚠ {error}</p>}
 
           <button type="submit" className={`btn-primary ${styles.submitBtn}`} disabled={loading}>
             {loading ? "Création..." : "Créer mon compte"}

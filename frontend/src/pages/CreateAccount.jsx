@@ -1,32 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createCompte } from "../api";
+import { useToast } from "../context/ToastContext";
 import styles from "./CreateAccount.module.css";
 
 export default function CreateAccount() {
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!nom.trim() || !prenom.trim()) {
-      setError("Le nom et le prénom sont obligatoires.");
+      showToast("Le nom et le prénom sont obligatoires.", "error");
       return;
     }
     setLoading(true);
-    setError(null);
     try {
       const data = await createCompte(nom.trim(), prenom.trim());
       if (data.succes) {
         navigate(`/comptes/${data.donnees.id}`);
       } else {
-        setError(data.message || "Erreur lors de la création.");
+        showToast(data.message || "Erreur lors de la création.", "error");
       }
     } catch {
-      setError("Le serveur est inaccessible.");
+      showToast("Le serveur est inaccessible.", "error");
     } finally {
       setLoading(false);
     }
@@ -56,8 +56,6 @@ export default function CreateAccount() {
               placeholder="Ex : Jean"
             />
           </div>
-
-          {error && <p className="error-msg">{error}</p>}
 
           <div className={styles.actions}>
             <button type="button" className="btn-ghost" onClick={() => navigate("/")}>

@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import styles from "./Navbar.module.css";
 
-export default function Navbar() {
+function Navbar() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,3 +44,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+export default memo(Navbar);

@@ -1,6 +1,7 @@
+import { memo } from "react";
 import styles from "./AccountCard.module.css";
 
-export default function AccountCard({ compte, onClick }) {
+function AccountCard({ compte, onClick }) {
   return (
     <div className={`card ${styles.card}`} onClick={onClick} role="button" tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && onClick()}>
@@ -15,3 +16,5 @@ export default function AccountCard({ compte, onClick }) {
     </div>
   );
 }
+
+export default memo(AccountCard);
